@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Checkout Page {% endblock %}
+{% block content %}
+
+<!-- Breadcrumb Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="{% url 'index' %}">Home</a>
+                <a class="breadcrumb-item text-dark" href="{% url 'shop' %}">Shop</a>
+                <span class="breadcrumb-item active">Checkout</span>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+<!-- Checkout Start -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Checkout</h2>
+
+    {% if messages %}
+    <div>
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'checkout' %}">
+        {% csrf_token %}
+
+        <!-- Billing Details -->
+        <h3>Billing Details</h3>
+        <table class="table table-bordered">
+            <tbody>
+                {% for field in billing_form %}
+                <tr>
+                    <td><label for="{{ field.id_for_label }}">{{ field.label }}</label></td>
+                    <td>{{ field }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Payment Method -->
+        <h3>Payment Method</h3>
+        <table class="table table-bordered">
+            <tbody>
+                {% for field in payment_form %}
+                <tr>
+                    <td><label for="{{ field.id_for_label }}">{{ field.label }}</label></td>
+                    <td>{{ field }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Order Summary -->
+        <h3>Order Summary</h3>
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                <tr>
+                    <td>{{ item.product.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2"><strong>Subtotal</strong></td>
+                    <td>${{ subtotal }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Shipping</strong></td>
+                    <td>${{ shipping_cost }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Total</strong></td>
+                    <td><strong>${{ total }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Place Order</button>
+        </div>
+    </form>
+</div>
+
+
+<!-- Checkout End -->
+
+
+{% endblock %}
